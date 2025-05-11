@@ -3,20 +3,44 @@ package main
 import (
 	"net"
 	"net/http"
-	"runtime"
+	"os"
 
 	"fmt"
+
+	"fyne.io/fyne"
+	"fyne.io/fyne/app"
+	"fyne.io/fyne/container"
+	"fyne.io/fyne/dialog"
+	"fyne.io/fyne/widget"
 )
 
 // ----------------------------------------------------------------
 func main() {
-	fmt.Println("Go-Sync")
-	fmt.Printf("Operating System : %s\n", runtime.GOOS)
 	xip := fmt.Sprintf("%s", GetOutboundIP())
 	port := "8080"
+	a := app.New()
+	w := a.NewWindow("Listening on " + xip + ":" + port)
 
-	fmt.Println("Server running....")
-	fmt.Println("Listening on " + xip + ":" + port)
+	memo := widget.NewEntry()
+	memo.SetPlaceHolder("Enter your memo here...")
+	memo.MultiLine = true               // Enable multiline for larger text fields
+	memo.Resize(fyne.NewSize(400, 100)) // Adjust the height (4x the default)
+
+	helloButton := widget.NewButton("Say Hello", func() {
+		// Display the value from the memo field in the dialog box
+		dialog.ShowInformation("Hello", "Hello, "+memo.Text, w)
+	})
+	exitButton := widget.NewButton("Exit", func() {
+		os.Exit(0)
+	})
+
+	w.SetContent(container.NewVBox(
+		memo,        // Add the memo field
+		helloButton, // Add the "Say Hello" button
+		exitButton,  // Add the "Exit" button
+	))
+	w.Resize(fyne.NewSize(400, 300))
+	w.ShowAndRun()
 	if err := http.ListenAndServe(xip+":"+port, nil); err != nil {
 		panic(err)
 	}
