@@ -22,11 +22,11 @@ func main() {
 	w := a.NewWindow("Listening on " + xip + ":" + port)
 
 	memo := widget.NewEntry()
-	memo.SetPlaceHolder("Enter your memo here...")
+	memo.SetPlaceHolder("Enter an IP address to sync with...")
 	memo.MultiLine = true               // Enable multiline for larger text fields
 	memo.Resize(fyne.NewSize(400, 100)) // Adjust the height (4x the default)
 
-	helloButton := widget.NewButton("Say Hello", func() {
+	helloButton := widget.NewButton("Connect", func() {
 		// Display the value from the memo field in the dialog box
 		dialog.ShowInformation("Hello", "Hello, "+memo.Text, w)
 	})
