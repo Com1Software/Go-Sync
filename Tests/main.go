@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bufio"
+	"encoding/xml"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -30,7 +33,8 @@ func main() {
 	memo.Resize(fyne.NewSize(400, 100)) // Adjust the height (4x the default)
 
 	helloButton := widget.NewButton("Connect", func() {
-		//		url := memo.Text
+		url := memo.Text
+		ReadURL(url)
 		// Display the value from the memo field in the dialog box
 		dialog.ShowInformation("Hello", "Hello, "+memo.Text, w)
 	})
@@ -88,9 +92,33 @@ func GetOutboundIP() net.IP {
 	return localAddr.IP
 }
 
-func ReadURL(url string) {
+type message struct {
+	Controller string `xml:"controller"`
+	DateTime   string `xml:"date_time"`
+	RandNum    string `xml:"rand_num"`
+}
 
-	return
+func ReadURL(url string) string {
+	xdata := ""
+	msg := &message{}
+	fmt.Printf("Reading URL: %s\n", url)
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Response status: %s\n", resp.Status)
+	defer resp.Body.Close()
+	reader := bufio.NewReader(resp.Body)
+	for {
+		line, erra := reader.ReadBytes('\n')
+		if erra != nil {
+			log.Fatal(err)
+		}
+		xml.Unmarshal(line, &msg)
+		fmt.Printf("%s  -  %s  -  %s\n", string(msg.Controller), string(msg.DateTime), string(msg.RandNum))
+	}
+
+	return xdata
 }
 
 type Agent struct {
