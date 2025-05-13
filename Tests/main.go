@@ -39,7 +39,7 @@ func main() {
 
 	helloButton := widget.NewButton("Connect", func() {
 		url := memo.Text
-		ReadURL(url)
+		memo1.SetPlaceHolder(ReadURL(url))
 		// Display the value from the memo field in the dialog box
 		dialog.ShowInformation("Hello", "Hello, "+memo.Text, w)
 	})
@@ -105,7 +105,7 @@ type message struct {
 }
 
 func ReadURL(url string) string {
-	xdata := ""
+	xdata := "test"
 	msg := &message{}
 	fmt.Printf("Reading URL: %s\n", url)
 	resp, err := http.Get(url)
@@ -121,8 +121,8 @@ func ReadURL(url string) string {
 			log.Fatal(err)
 		}
 		xml.Unmarshal(line, &msg)
-
-		xdata = string(msg.Controller) + string(msg.DateTime) + string(msg.RandNum) + "\n"
+		fmt.Printf("%s  -  %s  -  %s\n", string(msg.Controller), string(msg.DateTime), string(msg.RandNum))
+		//xdata = string(msg.Controller) + string(msg.DateTime) + string(msg.RandNum) + "\n"
 	}
 
 	return xdata
