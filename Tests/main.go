@@ -145,7 +145,7 @@ func ReadURL(url string) string {
 	}
 
 	// Construct the string with extracted values
-	return msg.Controller + " " + msg.DateTime + " " + msg.Command
+	return msg.Controller + " " + msg.DateTime + " " + msg.Command + " " + msg.Value
 }
 
 type Agent struct {
