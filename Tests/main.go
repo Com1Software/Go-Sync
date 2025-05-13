@@ -36,6 +36,15 @@ func main() {
 	memo1.MultiLine = true               // Enable multiline for larger text fields
 	memo1.Resize(fyne.NewSize(400, 100)) // Adjust the height (4x the default)
 
+	input := widget.NewEntry()
+	input.SetPlaceHolder("Enter Command...")
+
+	inputvalue := widget.NewEntry()
+	inputvalue.SetPlaceHolder("Enter Value...")
+
+	button := widget.NewButton("Cmd", func() {
+	})
+
 	helloButton := widget.NewButton("Connect", func() {
 		url := memo.Text
 		go func() {
@@ -56,11 +65,17 @@ func main() {
 		os.Exit(0)
 	})
 
+	inputContainer := container.NewGridWrap(fyne.NewSize(165, 40), input)
+	inputContainerValue := container.NewGridWrap(fyne.NewSize(165, 40), inputvalue)
+	buttonContainer := container.NewGridWrap(fyne.NewSize(50, 40), button)
+	layoutContainer := container.NewHBox(buttonContainer, inputContainer, inputContainerValue)
+
 	w.SetContent(container.NewVBox(
-		memo,        // Add the memo field
-		memo1,       // Add the second memo field
-		helloButton, // Add the "Say Hello" button
-		exitButton,  // Add the "Exit" button
+		memo,            // Add the memo field
+		memo1,           // Add the second memo field
+		layoutContainer, // Add the input field and button
+		helloButton,     // Add the "Say Hello" button
+		exitButton,      // Add the "Exit" button
 	))
 	w.Resize(fyne.NewSize(400, 300))
 
@@ -78,7 +93,7 @@ func main() {
 			msg := "<message>"
 			msg = msg + "<controller>" + fmt.Sprint(GetOutboundIP()) + "</controller>"
 			msg = msg + "<date_time>" + dtime[0:24] + "</date_time>"
-			msg = msg + "<rand_num>" + fmt.Sprintf("%d", 1) + "</rand_num>"
+			msg = msg + "<rand_num>" + fmt.Sprintf("%s", "Test") + "</rand_num>"
 			msg = msg + "/<message>\n"
 			event := msg
 			//		event := fmt.Sprintf("Controller=%s Time=%v\n", GetOutboundIP(), dtime[0:24])
