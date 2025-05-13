@@ -14,7 +14,6 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -39,9 +38,19 @@ func main() {
 
 	helloButton := widget.NewButton("Connect", func() {
 		url := memo.Text
-		memo1.SetPlaceHolder(ReadURL(url))
-		// Display the value from the memo field in the dialog box
-		dialog.ShowInformation("Hello", "Hello, "+memo.Text, w)
+		go func() {
+			for {
+				data := ReadURL(url)
+
+				// Use fyne.Do to safely update the UI from a goroutine
+				fyne.Do(func() {
+					memo1.SetText(data)
+				})
+
+				time.Sleep(1 * time.Second) // Adjust the refresh rate as needed
+			}
+		}()
+
 	})
 	exitButton := widget.NewButton("Exit", func() {
 		os.Exit(0)
@@ -81,9 +90,6 @@ func main() {
 
 	w.ShowAndRun()
 
-	//	if err := http.ListenAndServe(xip+":"+port, nil); err != nil {
-	//		panic(err)
-	//	}
 }
 
 func GetOutboundIP() net.IP {
@@ -101,31 +107,30 @@ func GetOutboundIP() net.IP {
 type message struct {
 	Controller string `xml:"controller"`
 	DateTime   string `xml:"date_time"`
-	RandNum    string `xml:"rand_num"`
+	Command    string `xml:"command"`
+	Value      string `xml:"value"`
 }
 
 func ReadURL(url string) string {
-	xdata := "test"
 	msg := &message{}
-	fmt.Printf("Reading URL: %s\n", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Response status: %s\n", resp.Status)
 	defer resp.Body.Close()
 	reader := bufio.NewReader(resp.Body)
+
 	for {
 		line, erra := reader.ReadBytes('\n')
 		if erra != nil {
-			log.Fatal(err)
+			log.Fatal(erra) // Ensure correct error logging
 		}
 		xml.Unmarshal(line, &msg)
-		fmt.Printf("%s  -  %s  -  %s\n", string(msg.Controller), string(msg.DateTime), string(msg.RandNum))
-		//xdata = string(msg.Controller) + string(msg.DateTime) + string(msg.RandNum) + "\n"
+		break // Exit after the first read
 	}
 
-	return xdata
+	// Construct the string with extracted values
+	return msg.Controller + " " + msg.DateTime + " " + msg.Command
 }
 
 type Agent struct {
