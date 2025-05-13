@@ -32,6 +32,11 @@ func main() {
 	memo.MultiLine = true               // Enable multiline for larger text fields
 	memo.Resize(fyne.NewSize(400, 100)) // Adjust the height (4x the default)
 
+	memo1 := widget.NewEntry()
+	memo1.SetPlaceHolder("...")
+	memo1.MultiLine = true               // Enable multiline for larger text fields
+	memo1.Resize(fyne.NewSize(400, 100)) // Adjust the height (4x the default)
+
 	helloButton := widget.NewButton("Connect", func() {
 		url := memo.Text
 		ReadURL(url)
@@ -44,6 +49,7 @@ func main() {
 
 	w.SetContent(container.NewVBox(
 		memo,        // Add the memo field
+		memo1,       // Add the second memo field
 		helloButton, // Add the "Say Hello" button
 		exitButton,  // Add the "Exit" button
 	))
@@ -115,7 +121,8 @@ func ReadURL(url string) string {
 			log.Fatal(err)
 		}
 		xml.Unmarshal(line, &msg)
-		fmt.Printf("%s  -  %s  -  %s\n", string(msg.Controller), string(msg.DateTime), string(msg.RandNum))
+
+		xdata = string(msg.Controller) + string(msg.DateTime) + string(msg.RandNum) + "\n"
 	}
 
 	return xdata
