@@ -93,7 +93,7 @@ func main() {
 			msg := "<message>"
 			msg = msg + "<controller>" + fmt.Sprint(GetOutboundIP()) + "</controller>"
 			msg = msg + "<date_time>" + dtime[0:24] + "</date_time>"
-			msg = msg + "<rand_num>" + fmt.Sprintf("%s", "Test") + "</rand_num>"
+			msg = msg + "<command>" + fmt.Sprintf("%s", "Test") + "</command>"
 			msg = msg + "/<message>\n"
 			event := msg
 			//		event := fmt.Sprintf("Controller=%s Time=%v\n", GetOutboundIP(), dtime[0:24])
